@@ -1,0 +1,134 @@
+@import 'tailwindcss';
+
+/* ------------------------------------------------------------------
+   CYBER LUXURY design tokens
+   ------------------------------------------------------------------ */
+@theme {
+  --color-bg: #08090c;
+  --color-bg-2: #101217;
+  --color-card: #151922;
+  --color-card-2: #1a1f2a;
+  --color-border: #272d38;
+  --color-border-strong: #343b48;
+  --color-text: #f4f5f7;
+  --color-muted: #9299a6;
+  --color-faint: #646b78;
+  --color-accent: #aeb8c7;
+  --color-blue: #3985ff;
+  --color-blue-soft: #3985ff1f;
+  --color-success: #35c98a;
+  --color-warning: #f0b84b;
+  --color-danger: #f16b75;
+
+  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Space Grotesk Variable', 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  --radius-xl: 0.875rem;
+  --radius-2xl: 1.125rem;
+
+  --shadow-card: 0 1px 0 0 #ffffff08 inset, 0 12px 32px -18px #000000cc;
+  --shadow-pop: 0 1px 0 0 #ffffff0d inset, 0 24px 60px -20px #000000f0;
+
+  --animate-fade-in: fade-in 160ms ease-out;
+  --animate-pop-in: pop-in 180ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  --animate-slide-up: slide-up 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes pop-in {
+    from { opacity: 0; transform: translateY(6px) scale(0.985); }
+    to { opacity: 1; transform: none; }
+  }
+  @keyframes slide-up {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: none; }
+  }
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+    -webkit-tap-highlight-color: transparent;
+    text-size-adjust: 100%;
+  }
+  body {
+    @apply bg-bg text-text font-sans antialiased;
+    font-feature-settings: 'cv11', 'ss01';
+    background-image:
+      radial-gradient(1200px 600px at 85% -10%, #3985ff0f, transparent 60%),
+      radial-gradient(900px 500px at -10% 110%, #aeb8c70a, transparent 60%);
+    background-attachment: fixed;
+    min-height: 100dvh;
+  }
+  ::selection {
+    background: #3985ff55;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-blue);
+    outline-offset: 2px;
+  }
+  input[type='date']::-webkit-calendar-picker-indicator {
+    filter: invert(0.75);
+    cursor: pointer;
+  }
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #343b48 transparent;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer components {
+  /* Subtle glass surface with a metallic top highlight */
+  .surface {
+    @apply rounded-2xl border border-border bg-card/80 backdrop-blur-xl;
+    box-shadow: var(--shadow-card);
+  }
+  .surface-flat {
+    @apply rounded-xl border border-border bg-bg-2/70;
+  }
+  .metal-text {
+    background: linear-gradient(180deg, #f4f5f7 0%, #aeb8c7 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .hairline {
+    background: linear-gradient(90deg, transparent, #aeb8c740, transparent);
+    height: 1px;
+  }
+  .field-control {
+    @apply w-full rounded-lg border border-border bg-bg-2 px-3 py-2 text-sm text-text placeholder:text-faint transition-colors outline-none;
+    @apply hover:border-border-strong focus:border-blue focus:ring-2 focus:ring-blue/20;
+    @apply disabled:cursor-not-allowed disabled:opacity-60;
+    min-height: 2.5rem;
+  }
+  .field-control[aria-invalid='true'] {
+    @apply border-danger/70 focus:ring-danger/20;
+  }
+  .label {
+    @apply mb-1.5 block text-xs font-medium tracking-wide text-muted;
+  }
+  .kicker {
+    @apply text-[0.68rem] font-semibold uppercase tracking-[0.18em] text-faint;
+  }
+  .num {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* Safe-area padding for installed iOS/Android PWAs */
+.pb-safe {
+  padding-bottom: max(env(safe-area-inset-bottom), 0px);
+}
+.pt-safe {
+  padding-top: env(safe-area-inset-top);
+}
