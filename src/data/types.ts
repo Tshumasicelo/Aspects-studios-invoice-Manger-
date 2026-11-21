@@ -46,6 +46,9 @@ export interface CounterRepository {
 
 export type Unsubscribe = () => void;
 
+/** Dispatched on `window` by a DataStore when opening storage is held up by another open tab/window. */
+export const DB_BLOCKED_EVENT = 'aspects:db-blocked';
+
 export interface DataStore {
   clients: Repository<Client>;
   services: Repository<Service>;

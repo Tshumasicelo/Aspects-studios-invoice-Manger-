@@ -1,11 +1,11 @@
 import { lazy, type ReactNode } from 'react';
 import { createHashRouter, RouterProvider, useRouteError, isRouteErrorResponse, Link } from 'react-router-dom';
-import { AlertTriangle, Compass, Loader2 } from 'lucide-react';
+import { AlertTriangle, Compass } from 'lucide-react';
 import { AppShell } from '@/components/layout/AppShell';
 import { ToastProvider } from '@/components/ui/Toast';
 import { ConfirmProvider } from '@/components/ui/Confirm';
 import { AppProvider } from '@/hooks/useApp';
-import { LogoMark } from '@/components/brand/Logo';
+import { BootScreen } from '@/components/layout/BootScreen';
 import { Button } from '@/components/ui/Button';
 
 // Route-level code splitting keeps the first load fast; the service worker
@@ -99,32 +99,11 @@ function NotFound(): ReactNode {
   throw new Response('Not found', { status: 404 });
 }
 
-function BootScreen({ error }: { error?: string }) {
-  return (
-    <div className="flex min-h-dvh flex-col items-center justify-center gap-5 px-6 text-center">
-      <LogoMark className="h-14 w-14" />
-      {error ? (
-        <>
-          <h1 className="font-display text-lg font-semibold">The app could not start</h1>
-          <p className="max-w-md text-sm text-muted">{error}</p>
-          <Button variant="secondary" onClick={() => window.location.reload()}>
-            Try again
-          </Button>
-        </>
-      ) : (
-        <div className="flex items-center gap-2 text-sm text-muted">
-          <Loader2 className="h-4 w-4 animate-spin text-blue" /> Opening your workspace…
-        </div>
-      )}
-    </div>
-  );
-}
-
 export default function App() {
   return (
     <ToastProvider>
       <ConfirmProvider>
-        <AppProvider fallback={({ error }) => <BootScreen error={error} />}>
+        <AppProvider fallback={(state) => <BootScreen {...state} />}>
           <RouterProvider router={router} future={{ v7_startTransition: true }} />
         </AppProvider>
       </ConfirmProvider>

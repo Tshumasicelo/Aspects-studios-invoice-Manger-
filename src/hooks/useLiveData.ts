@@ -8,12 +8,24 @@ import type { Dataset } from '@/services/analytics';
  * while the first result is loading.
  */
 export function useLiveData<T>(query: () => Promise<T>, deps: unknown[] = []): T | undefined {
-  const [value, setValue] = useState<{ v: T } | undefined>(undefined);
+  return useLiveQueryState(query, deps).value;
+}
+
+/**
+ * Like useLiveData, but also reports failures, so callers that block on the
+ * result (such as app start-up) can show an error instead of waiting forever.
+ */
+export function useLiveQueryState<T>(query: () => Promise<T>, deps: unknown[] = []): { value: T | undefined; error: unknown } {
+  const [state, setState] = useState<{ v?: { value: T }; error?: unknown }>({});
   useEffect(() => {
-    return store().watch(query, (v) => setValue({ v }));
+    return store().watch(
+      query,
+      (value) => setState({ v: { value } }),
+      (error) => setState((prev) => ({ ...prev, error })),
+    );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);
-  return value?.v;
+  return { value: state.v?.value, error: state.error };
 }
 
 /** All business records, live. Suitable for a local single-business dataset. */

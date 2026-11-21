@@ -1,6 +1,6 @@
 import { liveQuery, type Table } from 'dexie';
 import type { BusinessSettings, Counter } from '@/domain/types';
-import type { CounterRepository, DataStore, Repository, SettingsRepository } from '../types';
+import { DB_BLOCKED_EVENT, type CounterRepository, type DataStore, type Repository, type SettingsRepository } from '../types';
 import { AspectsDatabase } from './database';
 
 class DexieRepository<T extends { id: string }> implements Repository<T> {
@@ -65,6 +65,12 @@ class DexieCounterRepository implements CounterRepository {
 }
 
 export function createDexieStore(db = new AspectsDatabase()): DataStore & { db: AspectsDatabase } {
+  // Another tab holding an old connection can block opening/upgrading the database.
+  // Surface it so the start-up screen can tell the user what to do instead of waiting silently.
+  db.on('blocked', () => {
+    console.warn('[data] database open is blocked by another tab');
+    if (typeof window !== 'undefined') window.dispatchEvent(new Event(DB_BLOCKED_EVENT));
+  });
   return {
     db,
     clients: new DexieRepository(db.clients),
